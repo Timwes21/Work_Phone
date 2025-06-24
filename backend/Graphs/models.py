@@ -3,7 +3,10 @@ from pydantic import Field, BaseModel
 
 class State(TypedDict):
     caller_id: str
+    name: str
     convo: list[dict]
+    scheduling_callback: str
+    passing_message: str
     
     
 class Routes(BaseModel):
@@ -12,11 +15,9 @@ class Routes(BaseModel):
 class Callback(BaseModel):
     day_of_week: Optional[str]
     date: str = Field(examples=["01/30"])
-    name_of_caller: str
     
 class PassedMessage(BaseModel):
     message: str = Field(description="A summarized version of the message the caller wanted to leave")
-    name_of_caller: str 
     
-    
-    
+class CallerName(BaseModel):
+    name: str = Field(description="name of the person who called", default="unknown")    

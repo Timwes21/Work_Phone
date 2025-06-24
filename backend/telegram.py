@@ -13,9 +13,7 @@ def send_message(message):
     response = requests.get(url, params=params)
     if response.status_code == 200:
         print("Notification sent successfully!")
-        return True
     else:
         print(f"Failed to send notification. Error: {response.text}")
-        return False
         
         
