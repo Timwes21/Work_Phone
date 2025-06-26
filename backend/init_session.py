@@ -18,16 +18,17 @@ async def send_initial_conversation_item(openai_ws):
             "content": [
                 {
                     "type": "input_text",
-                    "text": "Greet the user with 'Hello there! I am an AI voice assistant powered by Twilio and the OpenAI Realtime API. You can ask me for facts, jokes, or anything you can imagine. How can I help you?'"
+                    "text": "Greet the user with 'Hello there! Sorry Tim did not pick up but i can answer any questions or schedule a callback wht tim himself'"
                 }
-            ]
+            ],
+            
         }
     }
     await openai_ws.send(json.dumps(initial_conversation_item))
     await openai_ws.send(json.dumps({"type": "response.create"}))
 
 
-async def initialize_session(openai_ws):
+async def initialize_session(openai_ws, name):
     """Control initial session with OpenAI."""
     session_update = {
         "type": "session.update",
@@ -42,6 +43,42 @@ async def initialize_session(openai_ws):
             "input_audio_transcription": {
                 "model": "gpt-4o-transcribe",
             },
+            "tools": [{
+                "type": "function",
+                "name": "query_documents",
+                "description": "If the caller is asking about something that pertains the person they were trying to call, then this function will be called",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                            "type": "string",
+                            "description": "what you need to be able to query for the semantic search of the documents",
+                        }
+                    },
+                    "required": ["query"]
+                }
+            },
+            {
+                "type": "function",
+                "name": "schedule_callback",
+                "description": f"If the caller is wanting to schedule a callback with {name}",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "description": f"the date that the caller wants {name} to call them back",
+                        },
+                        "time": {
+                            "type": "string",
+                            "description": f"the date that the caller wants {name} to call them back"
+                        }
+                    },
+                    "required": ["date", "time"]
+                }
+            }
+        ],
+        "tool_choice": "auto",
         }
     }
     print('Sending session update:', json.dumps(session_update))

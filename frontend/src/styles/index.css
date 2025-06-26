@@ -73,6 +73,7 @@ body{
   background-color: rgb(255, 255, 255);
   color: black;
   height: 80%;
+  width: 30%;
   border: 1px solid black;
 }
 hr{
@@ -86,4 +87,43 @@ hr{
   font-style: italic;
   color: rgba(0, 0, 0, 0.557);
   margin: 50px;
+}
+.file-names{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+}
+.file-name-con{
+  width: 100%;
+}
+.file-name{
+  text-decoration: underline;
+  margin-left: 10px;
+}
+#remove-file{
+  background-color: red;
+  box-shadow:1px 1px 5px black;
+  border-radius: 5px;
+  border: 1.5px solid black;
+  margin-right: 10px;
+  float: right;
+}
+#choose-file{
+  display: none;
+}
+#choose-file-label{
+  background-color: rgb(95, 204, 255);
+  border: 0;
+  box-shadow:1px 1px 5px black;
+  padding: 5px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+button{
+  background-color: black;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  border: 0;
 }

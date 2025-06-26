@@ -20,3 +20,4 @@ def missed_call_logs():
     results = collection.find_one({"number": work_number}, {"_id": 0})
     return results["logs"]
 
+

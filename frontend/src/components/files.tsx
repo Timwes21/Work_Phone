@@ -1,50 +1,68 @@
-import { useState } from "react"
-import { base } from "../routes";
-import { StringDecoder } from "string_decoder";
+import { useState, useEffect } from "react"
+import { fileBase } from "../routes";
 
 
 export default function Files(){
-    const [files, setFiles ] = useState<any[]>([]);
-    const [file, setFile] = useState<File| null>();
+    const [ fileNames, setFileNames ] = useState<string[]>([]);
+    const [ fileAdded, setFileAdded ] = useState<boolean>(false);
     
 
-
-    const addFiles = async() => {
-        console.log(file);
-        if (file){
-            const formData = new FormData()
-            formData.append("file", file)
-            
-            
-            
-            
-            fetch(base + "/save-files", {
-                method: "POST",
-                body: formData
-            })
-            .then(async(data)=>console.log(await data.json()))
-            .catch(err=>console.log("Something went wrong", err))
-        }
+    const deleteFile =(fileName: string) => {
+        fetch(fileBase+"/delete-file", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({filename: fileName})
+        })
+        .then(()=>setFileAdded(!fileAdded))
     }
 
+    useEffect(()=> {
+        fetch(fileBase + "/get-files")
+        .then(response => response.json())
+        .then(data=>{
+            setFileNames(data.files)
+        })
+    },[fileAdded])
+
+    const showFiles = () => {
+        if (fileNames.length < 1){
+            return <p className="no-file-message">Add Files for your call assistant to reference if the caller has questions</p>
+        }
+        return (
+            <div className="file-names">
+            {fileNames.map((value, _)=>(
+                <div key={value} className="file-name-con">
+                    <span className="file-name">{value}</span>
+                    <button onClick={()=>deleteFile(value)} id="remove-file">Remove</button>
+                </div>
+            ))}
+        </div>
+        )
+    }
+        
+    
 
 
     return(
         <div className="files">
             <h3>Files</h3>
             <hr />
-            <input type="file" onChange={e=>{
+            <label id="choose-file-label" htmlFor="choose-file">Add File</label>
+            <input id="choose-file" type="file" onChange={e=>{
                 let currentFile = e.target.files?.[0]
                 if (currentFile){
-                    setFile(e.target.files?.[0])
+                    const formData = new FormData()
+                    formData.append("file", currentFile)   
+                    
+                    fetch(fileBase + "/save-files", {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(()=>setFileAdded(!fileAdded))
+                    .catch(err=>console.log("Something went wrong", err))
                 }
-                else{
-                    setFile(null)
-                }
-
             }}/>
-            {file && <button onClick={addFiles}>Add Files</button>}
-            {file && <p className="no-file-message">Add Files for your call agent to reference if the caller has questions</p>}
+            {showFiles()}
         </div>
     )
 }
