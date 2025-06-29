@@ -1,9 +1,10 @@
 const tokenName: string = "workNumberToken";
 
-export const getToken = () => {
-    return localStorage.getItem(tokenName);
+export const getToken = (): string => {
+    const token = localStorage.getItem(tokenName);
+    return token? token: "noToken";
 }
 
-const setToken = (token: string) => {
+export const setToken = (token: string) => {
     localStorage.setItem(tokenName, token)
 }

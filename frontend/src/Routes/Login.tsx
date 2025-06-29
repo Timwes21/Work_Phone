@@ -1,8 +1,17 @@
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
+import useForm from "../hooks/useForm";
+
 
 export default function Login(){
+    const initialState = {
+        username: "",
+        password: ""
+    }
 
+    const { handleInputChange, login, state } = useForm(initialState);
 
+    console.log(state);
+    
     return(
         <div className="page">
             <div className="page-content">
@@ -10,13 +19,13 @@ export default function Login(){
                     <h3 className="auth-header">Login</h3>
                     <div className="inputs">
 
-                        <label htmlFor="">Username</label>
-                        <input type="text" />
-                        <label htmlFor="">Password</label>
-                        <input type="password" />
+                        <label htmlFor="login-username">Username</label>
+                        <input id="login-username" value={state.username} onChange={e=>handleInputChange(e, "username")} type="text" />
+                        <label htmlFor="login-password">Password</label>
+                        <input id="login-password" value={state.password} onChange={e=>handleInputChange(e, "password")} type="password" />
                     </div>
                     <p>Don't have an account? <Link to='/create-account' className="create-an-account">Create One</Link></p>
-                    <button id="create-account-button">Login</button>
+                    <button onClick={login} id="create-account-button">Login</button>
                 </div>
             </div>
         </div>

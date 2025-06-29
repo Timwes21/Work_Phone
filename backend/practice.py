@@ -33,5 +33,12 @@ from Graphs.query_graph import query_graph
 #     {"AI", "Ok your callback is scheduled for tomorow, Jerry"},
 # ]
 
-test = {"test_one": 1, "test_two": 2}
 
+
+from Routes.auth_routes import decode_access_token, create_access_token
+from utils.db import collection
+
+number = "(772) 6210972"
+
+new_number = number.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")
+print(new_number)

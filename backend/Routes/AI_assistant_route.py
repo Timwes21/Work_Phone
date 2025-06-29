@@ -1,5 +1,6 @@
 from fastapi import APIRouter, WebSocket, Request
 from utils.call_choice import dial_agent, dial_person
+from utils.function_calls import functions
 from init_session import initialize_session
 from fastapi.websockets import WebSocketDisconnect
 import websockets
@@ -84,6 +85,8 @@ async def handle_media_stream(websocket: WebSocket):
                     elif data['event'] == 'mark':
                         if mark_queue:
                             mark_queue.pop(0)
+                    elif data["event"] == "done":
+                        pass
             except WebSocketDisconnect:
                 print("Client disconnected.")
                 if openai_ws.open:
@@ -142,7 +145,10 @@ async def handle_media_stream(websocket: WebSocket):
                         if len(response) > 0:
                             response = response[0]
                             if response['type'] == "function_call":
-                                print(f"You have a function call: {response['type']}")
+                                function = response["name"]
+                                args = response["arguments"]
+                                args = json.loads(args)
+                                await functions[function](**args)
                         else:
                             print("empty list")
                         

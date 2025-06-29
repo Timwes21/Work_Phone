@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { fileBase } from "../routes";
+import { getToken } from "../token";
 
 
 export default function Files(){
@@ -17,17 +18,21 @@ export default function Files(){
     }
 
     useEffect(()=> {
-        fetch(fileBase + "/get-files")
+        fetch(fileBase + "/get-files", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({"token": getToken()})
+        })
         .then(response => response.json())
         .then(data=>{
-            setFileNames(data.files)
+            data.files && setFileNames(data.files)
         })
     },[fileAdded])
 
     const showFiles = () => {
-        if (fileNames.length < 1){
-            return <p className="no-file-message">Add Files for your call assistant to reference if the caller has questions</p>
-        }
+        if (fileNames.length < 1) 
+            return <p className="no-file-message">Add Files for your call assistant to reference if the caller has questions</p> 
+        
         return (
             <div className="file-names">
             {fileNames.map((value, _)=>(
@@ -51,8 +56,10 @@ export default function Files(){
             <input id="choose-file" type="file" onChange={e=>{
                 let currentFile = e.target.files?.[0]
                 if (currentFile){
-                    const formData = new FormData()
-                    formData.append("file", currentFile)   
+                    const token: string = getToken();
+                    const formData = new FormData();
+                    formData.append("file", currentFile);
+                    formData.append("token", token)
                     
                     fetch(fileBase + "/save-files", {
                         method: "POST",

@@ -1,10 +1,9 @@
 import Files from "./files"
-import MissedCalls from "./missed-calls"
-
+import Logs from "./logs"
 export default function Content(){
     return (
         <div className="page-content">
-            <MissedCalls/>
+            <Logs/>
             <Files/>
         </div>
     )

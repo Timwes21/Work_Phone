@@ -1,19 +1,27 @@
 from fastapi import APIRouter, Request, Form, UploadFile
 from fastapi.responses import JSONResponse
 from utils.db import collection
+from utils.access_token import decode_access_token
+from utils.data import get_data
+from pydantic import BaseModel
 import docx
 import pdfplumber
 import io
 import json
 
 
+
+
 router = APIRouter()
 
-@router.post("/save-files/{number}")
-async def save_files(number: str, file: UploadFile = Form(...)):
+@router.post("/save-files")
+async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
+    print(file)
     ext = file.headers['content-type']
     file_name = file.filename
-    res = collection.find_one({"number": number})
+    current = decode_access_token(token)
+    
+    res = collection.find_one({"tokens": current})
     existent_files = [j for i in res["files"] for j in i.keys()]
     print(existent_files)    
     if file_name in existent_files:
@@ -31,29 +39,27 @@ async def save_files(number: str, file: UploadFile = Form(...)):
         pages = pdf.pages
         contents = "\n".join([page.extract_text() for page in pages])
     
-    collection.update_one({"number": number},{"$push": {"files": {file_name: contents}}})
+    collection.update_one({"tokens": current},{"$push": {"files": {file_name: contents}}})
     
     
     
     
 
     
-@router.get("/get-files/{number}", response_class=JSONResponse)
-async def get_files(number: str):
-    user = collection.find_one({"number": number})
+@router.post("/get-files", response_class=JSONResponse)
+async def get_files(request: Request):
+    data = await get_data(request)
+    user = collection.find_one({"tokens": data["token"]})
     files = [j for i in user["files"] for j in i.keys()]
     print(files)
     return {"files": files}
 
 @router.post("/delete-file/{number}")
 async def delete_file(request: Request, number: str):
-    body: bytes = await request.body()
-    body: str = body.decode()
-    body = json.loads(body)
-    print(body)
+    data = await get_data(request)
     
-    file_name = body["filename"]
-    account = collection.find_one({"number": number})
+    file_name = data["filename"]
+    account = collection.find_one({"tokens": data["token"]})
     files: list = account["files"]
     n = 0
     for i in files:

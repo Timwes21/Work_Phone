@@ -58,25 +58,6 @@ async def initialize_session(openai_ws, name):
                     "required": ["query"]
                 }
             },
-            {
-                "type": "function",
-                "name": "schedule_callback",
-                "description": f"If the caller is wanting to schedule a callback with {name}",
-                "parameters": {
-                    "type": "object",
-                    "properties": {
-                        "date": {
-                            "type": "string",
-                            "description": f"the date that the caller wants {name} to call them back",
-                        },
-                        "time": {
-                            "type": "string",
-                            "description": f"the date that the caller wants {name} to call them back"
-                        }
-                    },
-                    "required": ["date", "time"]
-                }
-            }
         ],
         "tool_choice": "auto",
         }

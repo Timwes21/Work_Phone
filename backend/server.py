@@ -6,12 +6,11 @@ from dotenv import load_dotenv
 from utils.db import missed_call_logs
 from ngrok import connect
 from Routes.AI_assistant_route import router as AI_assistant_route
-# from Routes.auth_routes import router as auth_routes
+from Routes.auth_routes import router as auth_routes
 from Routes.file_routes import router as file_routes 
 
 load_dotenv()
 
-# Configuration
 PORT = int(os.getenv('PORT', 5050))
 NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 
@@ -20,7 +19,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -28,7 +27,7 @@ app.add_middleware(
 
 app.include_router(AI_assistant_route, prefix="/ai-assistant", tags=["AI Assistant"])
 app.include_router(file_routes, prefix="/files", tags=["files"])
-# app.include_router(auth_routes, prefix="/auth", tags=["auth"])
+app.include_router(auth_routes, prefix="/auth", tags=["auth"])
 
 
 
