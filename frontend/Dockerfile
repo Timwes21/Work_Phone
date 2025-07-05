@@ -2,14 +2,10 @@ FROM node:20
 
 WORKDIR /frontend
 
-COPY frontend/ .
+COPY . .
 
 RUN npm install
 
-RUN npx tsc -b config/tsconfig.json
+EXPOSE 5173  # or whatever your dev server port is
 
-RUN npx vite build --config config/vite.config.ts
-
-EXPOSE 3000
-
-CMD ["npx", "vite", "preview", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev"]
