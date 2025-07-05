@@ -1,14 +1,14 @@
 FROM node:20
 
-WORKDIR /app
+WORKDIR /
 
 COPY . .
 
 RUN npm install
 
-RUN npx tsc -b frontend/config/tsconfig.json
+RUN npx tsc -b config/tsconfig.json
 
-RUN npx vite build --config frontend/config/vite.config.ts
+RUN npx vite build --config config/vite.config.ts
 
 EXPOSE 3000
 
