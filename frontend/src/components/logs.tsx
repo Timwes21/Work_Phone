@@ -1,7 +1,6 @@
 import { useState } from "react"
 
 export default function Logs(){
-    const [ logs, setLogs ] = useState();
     return (
         <div className="missed-calls">
             <div className="log">

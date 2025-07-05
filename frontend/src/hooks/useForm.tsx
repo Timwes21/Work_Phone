@@ -1,4 +1,4 @@
-import { getToken, setToken } from "../token";
+import { setToken } from "../token";
 import { useReducer } from "react";
 import { authBase } from "../routes";
 import { useNavigate } from "react-router-dom";
