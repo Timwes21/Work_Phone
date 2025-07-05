@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request, Form, UploadFile
 from fastapi.responses import JSONResponse
 from utils.db import collection
+from utils.query import save_docs
 from utils.access_token import decode_access_token
 from utils.data import get_data
 from pydantic import BaseModel
@@ -21,7 +22,7 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     file_name = file.filename
     current = decode_access_token(token)
     
-    res = collection.find_one({"tokens": current})
+    res = await collection.find_one({"tokens": current})
     existent_files = [j for i in res["files"] for j in i.keys()]
     print(existent_files)    
     if file_name in existent_files:
@@ -38,8 +39,10 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
         pdf = pdfplumber.open(io.BytesIO(doc_bytes))
         pages = pdf.pages
         contents = "\n".join([page.extract_text() for page in pages])
+
+    save_docs(contents, res['number'])
     
-    collection.update_one({"tokens": current},{"$push": {"files": {file_name: contents}}})
+    await collection.update_one({"tokens": current},{"$push": {"files": {file_name: contents}}})
     
     
     
@@ -49,17 +52,17 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
 @router.post("/get-files", response_class=JSONResponse)
 async def get_files(request: Request):
     data = await get_data(request)
-    user = collection.find_one({"tokens": data["token"]})
-    files = [j for i in user["files"] for j in i.keys()]
-    print(files)
-    return {"files": files}
+    user = await collection.find_one({"tokens": data["token"]})
+    file_names = [j for i in user["files"] for j in i.keys()]
+    print(file_names)
+    return {"files": file_names}
 
-@router.post("/delete-file/{number}")
-async def delete_file(request: Request, number: str):
+@router.post("/delete-file")
+async def delete_file(request: Request):
     data = await get_data(request)
     
     file_name = data["filename"]
-    account = collection.find_one({"tokens": data["token"]})
+    account = await collection.find_one({"tokens": data["token"]})
     files: list = account["files"]
     n = 0
     for i in files:
@@ -67,5 +70,10 @@ async def delete_file(request: Request, number: str):
             break    
         n+=1
     files.pop(n)
-    collection.update_one({"number": number},{"$set": {"files": files}})
-    return "Succes"
+    files = account['files']
+    print("----made it pas the double for loop----")
+    files_contents_list = [j for i in files for j in i.values()]
+
+    save_docs(files_contents_list, account['number'])
+    await collection.update_one({"tokens": data['token']},{"$set": {"files": files}})
+    return "Success"

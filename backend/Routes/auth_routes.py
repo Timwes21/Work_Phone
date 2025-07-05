@@ -19,7 +19,7 @@ async def login(request: Request):
     data = await get_data(request)
     
     username, possible_password = data.values()
-    possible_user = collection.find_one({"username": username})
+    possible_user = await collection.find_one({"username": username})
     
     if possible_user.keys() == 0:
         return {"logged_in": False, "message": "username does not exist"}
@@ -34,7 +34,7 @@ async def login(request: Request):
     #     return {"logged_in": False, "message": "Only up to 4 devices can be logged in"}
     
     [token, current] = create_access_token()
-    collection.update_one({"username": username}, {"$push": {"tokens": current}})
+    await collection.update_one({"username": username}, {"$push": {"tokens": current}})
     return {"logged_in": True, "message": "Logged In!", "token": token}
 
     
@@ -45,7 +45,7 @@ async def logout(request: Request):
     data: dict = await get_data(request)
     token: str = data["token"]
     print(f"**Got token: {token}")
-    collection.update_one({"tokens": token}, {"$pull": {"tokens": token}})
+    await collection.update_one({"tokens": token}, {"$pull": {"tokens": token}})
     return {"message": "Logged Out"}
     
 
@@ -65,7 +65,7 @@ async def create_account(request: Request):
         "tokens": [current_time],
         "files": []
     }
-    collection.insert_one(document)
+    await collection.insert_one(document)
     return {"token": token, "message": "Logged In"}
 
 

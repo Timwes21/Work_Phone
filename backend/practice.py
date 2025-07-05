@@ -1,44 +1,28 @@
-import crypto.app
-import crypto.library
-import crypto.library.cryptor
-import crypto.settings
-from twilio.rest import Client
-from dotenv import load_dotenv
-load_dotenv()
-from Graphs.query_graph import query_graph
-            
-            
-# account_sid = os.environ['ACCOUNT_SID']
-# auth_token = os.environ['AUTH_TOKEN']
-# twilio_phn_nmbr = os.environ['NUMBER']
-# my_phn_nmbr = "+17726210972"
-# client = Client(account_sid, auth_token)
-
-
-# def send_message(body):
-#     message = client.messages.create(
-#         body=body,
-#         from_=twilio_phn_nmbr,  # your Twilio phone number
-#         to=my_phn_nmbr      # recipient's phone number
-#     )
-#     return message.status    
-    
-
-# convo = [
-#     {"caller": "hello"},
-#     {"AI": "Hello i am tims ai assistant how may i help you"},
-#     {"caller": "Yes i would like to scehdule a callback for tomorow"},
-#     {"AI": "Ok what is your name"},
-#     {"caller": "My name is jerry"},
-#     {"AI", "Ok your callback is scheduled for tomorow, Jerry"},
-# ]
-
-
-
-from Routes.auth_routes import decode_access_token, create_access_token
+import requests
+import certifi
 from utils.db import collection
+import asyncio
+from langchain_core.documents import Document
+from pydantic import BaseModel, Field
+from dotenv import load_dotenv
 
-number = "(772) 6210972"
 
-new_number = number.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")
-print(new_number)
+class Example:
+    calls = []
+    def __init__(self):
+        self.logs = []
+
+    def append_log(self, thing_to_append):
+        self.logs.append(thing_to_append)
+
+    def append_calls(self, thing_to_append):
+        self.calls.append(thing_to_append)
+
+    def print_calls(self):
+        print(self.calls)
+
+example1 = Example()
+example2 = Example()
+
+example1.append_calls(1)
+example2.print_calls()

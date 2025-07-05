@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-from utils.db import missed_call_logs
 from ngrok import connect
 from Routes.AI_assistant_route import router as AI_assistant_route
 from Routes.auth_routes import router as auth_routes
@@ -29,11 +28,6 @@ app.include_router(AI_assistant_route, prefix="/ai-assistant", tags=["AI Assista
 app.include_router(file_routes, prefix="/files", tags=["files"])
 app.include_router(auth_routes, prefix="/auth", tags=["auth"])
 
-
-
-@app.get("/missed-call-logs")
-async def get_missed_call_logs():
-    return missed_call_logs()
 
     
 @app.get("/test")

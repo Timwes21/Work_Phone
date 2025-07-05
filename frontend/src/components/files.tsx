@@ -12,7 +12,7 @@ export default function Files(){
         fetch(fileBase+"/delete-file", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({filename: fileName})
+            body: JSON.stringify({filename: fileName, token: getToken()})
         })
         .then(()=>setFileAdded(!fileAdded))
     }
