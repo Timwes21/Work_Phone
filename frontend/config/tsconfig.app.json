@@ -6,11 +6,10 @@
     "skipLibCheck": true,
 
     /* Bundler mode */
-    "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "jsx": "react-jsx",
-    "target": "ESNext",
+    "target": "es2020",
     "module": "ESNext",
     "moduleResolution": "Node",
     "rootDir": "../src",
