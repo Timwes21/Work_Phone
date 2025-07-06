@@ -24,4 +24,4 @@ RUN npx vite build --config config/vite.config.ts
 
 EXPOSE 4173
 
-CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "4173"]
+CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port"]
