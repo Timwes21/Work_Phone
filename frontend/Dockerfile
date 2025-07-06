@@ -24,4 +24,4 @@ RUN npm run build
 EXPOSE 8080
 
 
-CMD ["npm", "start", "vite preview", "preview", "vite"]
+CMD ["npm", "start", "vite preview", "preview", "vite", "echo PORT env: $PORT"]
