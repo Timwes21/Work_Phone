@@ -7,7 +7,8 @@
     "dev": "vite --config config/vite.config.ts",
     "build": "vite build --config config/vite.config.ts",
     "lint": "eslint .",
-    "preview": "vite preview --config config/vite.config.ts"
+    "preview": "vite preview --config config/vite.config.ts",
+    "start": "vite preview --port $PORT --host"
   },
   "dependencies": {
     "react": "^19.1.0",
