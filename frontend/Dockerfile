@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json first (better build cache)
 COPY package*.json ./
-RUN echo "PORT env: $PORT"
 
 # Install dependencies
 RUN npm install
@@ -20,4 +19,4 @@ RUN npm run build
 EXPOSE 8080
 
 
-CMD ["npm", "start", "preview", "vite", "echo PORT env: $PORT"]
+CMD ["npm", "start", "run"]
