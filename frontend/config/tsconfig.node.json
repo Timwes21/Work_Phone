@@ -4,7 +4,7 @@
     "lib": ["Dom", "ES2023"],
     "skipLibCheck": true,
 
-      "target": "es2020",
+    "target": "es2020",
     "module": "ESNext",
     "moduleResolution": "Node",
     "rootDir": "../src",
