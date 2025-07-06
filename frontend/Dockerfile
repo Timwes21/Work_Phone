@@ -14,14 +14,10 @@ RUN npm install
 # Copy everything else (your source code, config, etc.)
 COPY . .
 
-# Debug: confirm your files are there
-RUN ls -la
-RUN ls -la src/
-
 RUN npm run build
 
 
 EXPOSE 8080
 
 
-CMD ["npm", "start", "vite preview", "preview", "vite", "echo PORT env: $PORT"]
+CMD ["npm", "start", "preview", "vite", "echo PORT env: $PORT"]
