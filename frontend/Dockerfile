@@ -17,7 +17,7 @@ COPY . .
 RUN ls -la
 RUN ls -la src/
 
-RUN npx config/tsconfig.json
+RUN npm run build
 
 
 RUN npx vite build --config config/vite.config.ts
