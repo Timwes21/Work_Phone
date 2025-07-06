@@ -20,9 +20,7 @@ RUN ls -la src/
 RUN npm run build
 
 
-RUN npx vite build --config config/vite.config.ts
-ENV PORT=8080
 EXPOSE 8080
 
 
-CMD ["npm", "npx", "vite", "preview", "--port", "sh", "-c", "echo \"Runtime Port is $PORT\" && npx vite preview --host --port $PORT"]
+CMD ["npm", "start"]
