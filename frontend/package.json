@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "start": "vite preview --host 0.0.0.0 --port $PORT",
 
-    "preview": "vite preview --port $PORT --host"
+    "preview": "vite preview --host 0.0.0.0 --port $PORT"
+
   },
   "dependencies": {
     "dotenv": "^17.0.1",

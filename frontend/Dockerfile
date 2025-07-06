@@ -6,6 +6,7 @@ WORKDIR /app
 
 # Copy package.json and package-lock.json first (better build cache)
 COPY package*.json ./
+RUN echo "PORT env: $PORT"
 
 # Install dependencies
 RUN npm install
