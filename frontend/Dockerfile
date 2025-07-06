@@ -23,6 +23,5 @@ RUN echo "Port is $PORT"
 
 RUN npx vite build --config config/vite.config.ts
 
-EXPOSE 4173
 
-CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port"]
+CMD ["npm", "npx", "vite", "preview"]
