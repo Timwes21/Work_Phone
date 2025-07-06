@@ -1,8 +1,8 @@
-import Home from './Routes/Home';
-import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from './Routes/Login';
-import CreateAccount from './Routes/CreateAccount';
-import TwilioTutorial from './Routes/TwilioTutorial';
+import Home from './Routes/Home.tsx';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from './Routes/Login.tsx';
+import CreateAccount from './Routes/CreateAccount.tsx';
+import TwilioTutorial from './Routes/TwilioTutorial.tsx';
 
 
 function App() {

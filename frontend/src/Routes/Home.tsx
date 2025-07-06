@@ -1,8 +1,8 @@
-import NavBar from '../components/nav-bar';
-import Content from '../components/content';
+import NavBar from '../components/nav-bar.tsx';
+import Content from '../components/content.tsx';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getToken } from '../token';
+import { getToken } from '../token.ts';
 
 
 function Home() {

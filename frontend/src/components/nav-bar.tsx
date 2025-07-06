@@ -1,5 +1,5 @@
-import { authBase } from "../routes"
-import { getToken, setToken } from "../token"
+import { authBase } from "../routes.ts"
+import { getToken, setToken } from "../token.ts"
 import { useNavigate } from "react-router-dom"
 
 export default function NavBar(){

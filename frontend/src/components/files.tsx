@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
-import { fileBase } from "../routes";
-import { getToken } from "../token";
+import { fileBase } from "../routes.ts";
+import { getToken } from "../token.ts";
 
 
 export default function Files(){

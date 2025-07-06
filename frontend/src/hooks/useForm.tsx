@@ -1,6 +1,6 @@
-import { setToken } from "../token";
+import { setToken } from "../token.ts";
 import { useReducer } from "react";
-import { authBase } from "../routes";
+import { authBase } from "../routes.ts";
 import { useNavigate } from "react-router-dom";
 
 type createAccountForm = {
