@@ -7,6 +7,7 @@
     "dev": "vite --config config/vite.config.ts",
     "build": "vite build --config config/vite.config.ts",
     "lint": "eslint .",
+    "start": "echo \"Port is $PORT\" && vite preview --host --port $PORT",
     "preview": "vite preview --port $PORT --host"
   },
   "dependencies": {

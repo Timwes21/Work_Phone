@@ -19,7 +19,6 @@ RUN ls -la src/
 
 RUN npm run build
 
-RUN echo "Port is $PORT"
 
 RUN npx vite build --config config/vite.config.ts
 
