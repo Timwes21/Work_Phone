@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI
+from fastapi import FastAPI, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
@@ -19,7 +19,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["http://localhost:5173", "https://workphone-production.up.railway.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -32,8 +32,8 @@ app.include_router(auth_routes, prefix="/auth", tags=["auth"])
 
     
 @app.get("/test")
-async def test():
-    print("here")
+async def test(name: str = Form(...), number: str = Form(...), file: UploadFile = Form(...)):
+
     return "hello"
 
 if __name__ == "__main__":
