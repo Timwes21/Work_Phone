@@ -11,6 +11,7 @@ from Routes.file_routes import router as file_routes
 load_dotenv()
 
 PORT = int(os.getenv('PORT', 5050))
+print(PORT)
 NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 
 

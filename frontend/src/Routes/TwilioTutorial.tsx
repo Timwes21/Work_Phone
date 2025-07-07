@@ -34,7 +34,7 @@ export default function TwilioTutorial(){
                 <ul>
                     <li>Once the number is bought head to your active numbers and click on your number</li>
                     <li>Head to the section where a url comes in through a webhook</li>
-                    <li>Change the url to https://backend-production-8368.up.railway.app/incoming-call/&lt;Your Number&gt;</li>
+                    <li>Change the url to https://backend-production-8368.up.railway.app/ai-assistant/incoming-call/&lt;Your Number&gt;</li>
                 </ul>
                 <img className="twilio-image" src={twilioImageFive} alt="" />
                 <Link to="/create-account" id="back-to-create-account">Back to Create Account</Link>
