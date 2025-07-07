@@ -7,6 +7,6 @@ export default defineConfig({
   plugins: [react()],
 })
 
-console.log("Vite preview starting on port:", process.env?.HOST);
+console.log("Vite preview starting on host:", process.env);
 
 
