@@ -5,9 +5,6 @@ dotenv.config();
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  preview: {
-    allowedHosts: "workphone-production.up.railway.app"
-  }
 })
 
 
