@@ -5,9 +5,7 @@ from utils.query import save_docs
 from utils.access_token import decode_access_token
 from utils.data import get_data
 from pydantic import BaseModel
-import docx
-import pdfplumber
-import io
+from utils.file_parse import get_doc_contents
 import json
 
 
@@ -18,7 +16,6 @@ router = APIRouter()
 @router.post("/save-files")
 async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     print(file)
-    ext = file.headers['content-type']
     file_name = file.filename
     current = decode_access_token(token)
     
@@ -28,17 +25,9 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     if file_name in existent_files:
         return "File Already Exists"
     
-    doc_bytes = await file.read()
     
-    if "vnd.openxmlformats-officedocument.wordprocessingml.document" in ext:
-        print("document is docx file")
-        document = docx.Document(io.BytesIO(doc_bytes))
-        contents = "\n".join([para.text for para in document.paragraphs])
-    elif "pdf" in ext:
-        print("document is pdf file")
-        pdf = pdfplumber.open(io.BytesIO(doc_bytes))
-        pages = pdf.pages
-        contents = "\n".join([page.extract_text() for page in pages])
+    
+    contents = get_doc_contents(file)
 
     save_docs(contents, res['number'])
     
@@ -71,7 +60,6 @@ async def delete_file(request: Request):
         n+=1
     files.pop(n)
     files = account['files']
-    print("----made it pas the double for loop----")
     files_contents_list = [j for i in files for j in i.values()]
 
     save_docs(files_contents_list, account['number'])

@@ -36,7 +36,6 @@ def save_docs(files_content_list, number):
     filepath = get_file_path(number)
     doc = Document(page_content=json.dumps(files_content_list))
     if len(doc.page_content) == 0:
-        os.remove(filepath)
         return
 
     text_splitter = RecursiveCharacterTextSplitter(

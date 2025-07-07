@@ -27,9 +27,9 @@ export default function CreateAccount(){
                         <label htmlFor="create-account-password">Password</label>
                         <input id="create-account-password" value={state.password} onChange={e=>handleInputChange(e, "password")} type="text" />
                         <label htmlFor="number">Twilio Number</label>
-                        <input id="number" value={"number" in state && state.number} onChange={e=>handleInputChange(e, "number")} type="text" />
+                        <input id="number" value={"email" in state && state.email} onChange={e=>handleInputChange(e, "number")} type="text" />
                         <label htmlFor="email">Email</label>
-                        <input id="email" value={"email" in state && state.email} onChange={e=>handleInputChange(e, "email")} type="text" name=""/>
+                        <input id="email" value={"number" in state && state.number} onChange={e=>handleInputChange(e, "email")} type="text" name=""/>
                     </div>
                     <span>Have an account? <Link to='/login' className="create-an-account">Log in</Link></span>
                     <Link to='/twilio-tutorial'>How to get a Twilio Number?</Link>

@@ -7,6 +7,7 @@ from ngrok import connect
 from Routes.AI_assistant_route import router as AI_assistant_route
 from Routes.auth_routes import router as auth_routes
 from Routes.file_routes import router as file_routes 
+from Routes.portfolio_test_route import router as test_route
 
 load_dotenv()
 
@@ -28,14 +29,10 @@ app.add_middleware(
 app.include_router(AI_assistant_route, prefix="/ai-assistant", tags=["AI Assistant"])
 app.include_router(file_routes, prefix="/files", tags=["files"])
 app.include_router(auth_routes, prefix="/auth", tags=["auth"])
+app.include_router(test_route, prefix="/portfolio", tags=["test"])
 
 
     
-@app.get("/test")
-async def test(name: str = Form(...), number: str = Form(...), file: UploadFile = Form(...)):
-
-    return "hello"
-
 if __name__ == "__main__":
     import uvicorn
     res = connect(addr=PORT, authtoken=NGROK_TOKEN); 

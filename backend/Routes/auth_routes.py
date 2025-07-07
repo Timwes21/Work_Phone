@@ -61,7 +61,7 @@ async def create_account(request: Request):
         "username": username,
         "password": hashed_password,
         "email": email,
-        "number" : f"+1{new_number}",
+        "twilio_number" : f"+1{new_number}",
         "tokens": [current_time],
         "files": []
     }
