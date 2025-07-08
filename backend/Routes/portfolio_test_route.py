@@ -16,7 +16,7 @@ async def test(name: str = Form(...), file: UploadFile = Form(...)):
     contents_of_file: dict = await get_doc_contents(file)
     await save_docs_with_faiss(contents_of_file, "7726771701", portfolio=True)
 
-    await collection.update_one({"twilio_number": "+17726771701"}, {"$set": {"files": contents_of_file, "name": name}})
+    await collection.update_one({"twilio_number": "7726771701"}, {"$set": {"files": contents_of_file, "name": name}})
     return "Updated!"
 
 @router.api_route("/incoming-call/{business_number}", methods=["GET", "POST"])
