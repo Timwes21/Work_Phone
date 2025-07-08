@@ -1,10 +1,3 @@
-import requests
-import certifi
-from utils.db import collection
-import asyncio
-from langchain_core.documents import Document
-from pydantic import BaseModel, Field
-from dotenv import load_dotenv
-
-test = "ggg"
-
+test = {"test1": 1, "test2": 2}
+files_contents_dict = [k for [j, k] in test.items()]
+print(files_contents_dict)

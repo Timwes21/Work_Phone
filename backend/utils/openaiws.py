@@ -84,7 +84,7 @@ class RealTimeInteraction:
             async for openai_message in self.openai_ws:
                 response = json.loads(openai_message)
                 if response['type'] in self.LOG_EVENT_TYPES:
-                    print(f"Received event: {response['type']}", response)
+                    # print(f"Received event: {response['type']}", response)
                     pass
 
                 if response.get('type') == 'response.audio.delta' and 'delta' in response:
@@ -131,9 +131,10 @@ class RealTimeInteraction:
                         response = response[0]
                         if response['type'] == "function_call":
                             query = response['arguments']                                
+                            print("***Question for FAISS", query)
                             results = await self.qa.ainvoke(query)
                             results = results['result']
-                            print(results)
+                            print("****Results from FAISS: ", results)
                             send_results = {
                                 "type": "conversation.item.create",
                                 "item": {

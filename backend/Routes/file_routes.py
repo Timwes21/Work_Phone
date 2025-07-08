@@ -20,7 +20,7 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     current = decode_access_token(token)
     
     res = await collection.find_one({"tokens": current})
-    existent_files = [j for i in res["files"] for j in i.keys()]
+    existent_files = res['files']
     print(existent_files)    
     if file_name in existent_files:
         return "File Already Exists"
@@ -29,7 +29,7 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     
     contents = get_doc_contents(file)
 
-    save_docs(contents, res['number'])
+    save_docs([contents], res['twilio_number'])
     
     await collection.update_one({"tokens": current},{"$push": {"files": {file_name: contents}}})
     
@@ -52,7 +52,7 @@ async def delete_file(request: Request):
     
     file_name = data["filename"]
     account = await collection.find_one({"tokens": data["token"]})
-    files: list = account["files"]
+    files: list[dict] = account["files"]
     n = 0
     for i in files:
         if file_name in i.keys():
@@ -60,8 +60,8 @@ async def delete_file(request: Request):
         n+=1
     files.pop(n)
     files = account['files']
-    files_contents_list = [j for i in files for j in i.values()]
+    files_contents_dict = [k for i in files for [j, k] in i.items()]
 
-    save_docs(files_contents_list, account['number'])
+    save_docs(files_contents_dict, account['number'])
     await collection.update_one({"tokens": data['token']},{"$set": {"files": files}})
     return "Success"
