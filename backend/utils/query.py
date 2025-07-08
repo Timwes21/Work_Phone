@@ -1,6 +1,4 @@
 import os
-import json
-
 from langchain_core.documents import Document
 from langchain.output_parsers import PydanticOutputParser
 from langchain_core.prompts import ChatPromptTemplate
@@ -31,9 +29,9 @@ class OrganizedDoc(BaseModel):
 class Docs(BaseModel):
     docs: list[OrganizedDoc]
 
-async def ask_document(number):
+async def ask_document(number, files):
     filepath = get_file_path(number)
-    if os.path.exists(filepath):
+    if len(files) > 0:
         print("vector store exists")
         library = FAISS.load_local(filepath, embeddings=embeddings, allow_dangerous_deserialization=True)
         retriever = library.as_retriever()
@@ -43,27 +41,14 @@ async def ask_document(number):
     return None
 
 
-def save_docs(files_content, number, portfolio=False):
-    if len(files_content) == 0:
-        os.remove(filepath)
-        return
+async def save_docs_with_faiss(files_content, number, portfolio=False):
     filepath = get_file_path(number)
-    parser = PydanticOutputParser(pydantic_object=Docs)
-    instructions = parser.get_format_instructions()
-    prompt_template = ChatPromptTemplate.from_template("Condense this document into organized sections that make it easy to find things in a vector store: {files_content} {format}")
-    prompt = prompt_template.partial(format=instructions)
-    chain = prompt | llm | parser
-    res: Docs = chain.invoke({"files_content": files_content})
-    print(res)
-    docs = []
-    for item in res.docs:
-        print(item)
-        docs.append(Document(page_content=item.content, metadata={"category": item.metadata}))
-
-
+    if len(files_content) == 0:
+        return
+    docs = organize_docs(files_content)
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
-        chunk_overlap=100,
+        chunk_overlap=0,
         length_function=len
     )
 
@@ -73,7 +58,7 @@ def save_docs(files_content, number, portfolio=False):
 
     
     
-    if os.path.exists(filepath) and not portfolio:
+    if not portfolio and len(files_content) > 1:
         existing = FAISS.load_local(filepath, embeddings, allow_dangerous_deserialization=True)
         existing.merge_from(library)
         existing.save_local(filepath)
@@ -81,6 +66,23 @@ def save_docs(files_content, number, portfolio=False):
 
     library.save_local(filepath)
 
+
+def organize_docs(files_content):
+    parser = PydanticOutputParser(pydantic_object=Docs)
+    instructions = parser.get_format_instructions()
+    prompt_template = ChatPromptTemplate.from_template("Condense this document into organized sections that make it easy to find things in a vector store, make sure each metadata is unique: {files_content} {format}")
+    prompt = prompt_template.partial(format=instructions)
+    chain = prompt | llm | parser
+    res: Docs = chain.invoke({"files_content": files_content})
+    print(res)
+    docs = []
+    for item in res.docs:
+        print(item)
+        docs.append(Document(page_content=item.content, metadata={"category": item.metadata}))
+    return docs
+
+
+    
 
 
     

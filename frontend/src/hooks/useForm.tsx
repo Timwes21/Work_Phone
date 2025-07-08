@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 type createAccountForm = {
     username: string,
     password: string,
-    email: string,
-    number: string
+    name: string
+    twilioNumber: string,
+    realNumber: string
 }
 
 type loginForm = {
@@ -31,15 +32,20 @@ export default function useForm(initialState: createAccountForm | loginForm){
                 ...state,
                 password: action.nextPassword,
             }
-            case 'changed_number': 
+            case "changed_name":
+                return {
+                    ...state,
+                name: action.name,    
+                }
+            case 'changed_twilio_number': 
             return {
                 ...state,
-                number: action.nextNumber,
+                twilioNumber: action.nextNumber,
             }
-            case 'changed_email': 
+            case 'changed_real_number': 
             return {
                 ...state,
-                email: action.nextEmail,
+                realNumber: action.nextEmail,
             };
             default:
                 return state;
@@ -48,7 +54,6 @@ export default function useForm(initialState: createAccountForm | loginForm){
 
     const nav = useNavigate();
     const createAccount = () => {
-        console.log(state);
         fetch(authBase + "/create-account", {
             method: "POST",
             headers: {"Content-Type": "application/json"},

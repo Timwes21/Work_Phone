@@ -1,19 +1,17 @@
 from fastapi import APIRouter, Request, Form, UploadFile
 from fastapi.responses import JSONResponse
 from utils.db import collection
-from utils.query import save_docs
+from utils.query import save_docs_with_faiss
 from utils.access_token import decode_access_token
 from utils.data import get_data
-from pydantic import BaseModel
 from utils.file_parse import get_doc_contents
-import json
 
 
 
 
 router = APIRouter()
 
-@router.post("/save-files")
+@router.post("/save-files", response_class=JSONResponse)
 async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     print(file)
     file_name = file.filename
@@ -23,15 +21,16 @@ async def save_files(file: UploadFile = Form(...), token: str = Form(...)):
     existent_files = res['files']
     print(existent_files)    
     if file_name in existent_files:
-        return "File Already Exists"
+        return {"file_exists": True}
     
     
     
-    contents = get_doc_contents(file)
+    contents = await get_doc_contents(file)
 
-    save_docs([contents], res['twilio_number'])
-    
+    await save_docs_with_faiss([contents], res['twilio_number'])
+    print("here")
     await collection.update_one({"tokens": current},{"$push": {"files": {file_name: contents}}})
+    return {"file_exists": False}
     
     
     
@@ -51,17 +50,16 @@ async def delete_file(request: Request):
     data = await get_data(request)
     
     file_name = data["filename"]
-    account = await collection.find_one({"tokens": data["token"]})
-    files: list[dict] = account["files"]
+    user_account = await collection.find_one({"tokens": data["token"]})
+    files: list[dict] = user_account["files"]
     n = 0
     for i in files:
         if file_name in i.keys():
             break    
         n+=1
     files.pop(n)
-    files = account['files']
-    files_contents_dict = [k for i in files for [j, k] in i.items()]
+    all_files_contents = [k for i in user_account['files'] for [_, k] in i.items()]
 
-    save_docs(files_contents_dict, account['number'])
+    await save_docs_with_faiss(all_files_contents, user_account['twilio_number'])
     await collection.update_one({"tokens": data['token']},{"$set": {"files": files}})
     return "Success"

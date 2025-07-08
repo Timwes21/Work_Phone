@@ -53,15 +53,16 @@ async def logout(request: Request):
 async def create_account(request: Request):
     print("**In create_account**")
     data: dict = await get_data(request)
-    username, password, number, email = data.values()
+    username, password, name, twilio_number, real_number = data.values()
     hashed_password = pwd_context.hash(password)
-    new_number = number.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")
+    twilio_number = number.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")
     [token, current_time] = create_access_token()
     document = {
         "username": username,
         "password": hashed_password,
-        "email": email,
-        "twilio_number" : f"+1{new_number}",
+        "name": name,
+        "twilio_number" : f"+1{twilio_number}",
+        "real_number": f"+1{real_number}",
         "tokens": [current_time],
         "files": []
     }

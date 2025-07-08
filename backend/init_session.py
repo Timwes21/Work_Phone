@@ -1,13 +1,15 @@
 import json
 
-SYSTEM_MESSAGE = (
-    "You are an AI Assistant for Tim, for when someone calls him and he doesnt pick up, you are actiavted."
-    "You're purpose is to answer any questions and refer to the documents via function call"
-    "Only say one sentence at a time so you dont interupt them."
-)
+
+def get_system_message(name):
+    return (
+        f"You are {name}'s AI Assistant , for when someone calls him and he doesnt pick up, you are actiavted."
+        "You're purpose is to answer any questions and refer to the documents via function call"
+        "Only say one sentence at a time so you dont interupt them."
+    )
 VOICE = 'alloy'
 
-async def send_initial_conversation_item(openai_ws):
+async def send_initial_conversation_item(openai_ws, name):
     """Send initial conversation item if AI talks first."""
     initial_conversation_item = {
         "type": "conversation.item.create",
@@ -17,7 +19,7 @@ async def send_initial_conversation_item(openai_ws):
             "content": [
                 {
                     "type": "input_text",
-                    "text": "Greet the user with 'Hello there! Sorry Tim did not pick up but i can answer any questions or schedule a callback wht tim himself'"
+                    "text": f"Greet the user with 'Hello there! Sorry {name} did not pick up but i can answer any questions you may have'"
                 }
             ],
             
@@ -27,7 +29,7 @@ async def send_initial_conversation_item(openai_ws):
     await openai_ws.send(json.dumps({"type": "response.create"}))
 
 
-async def initialize_session(openai_ws, qa):
+async def initialize_session(openai_ws, qa, name):
     """Control initial session with OpenAI."""
     session_update = {
         "type": "session.update",
@@ -36,7 +38,7 @@ async def initialize_session(openai_ws, qa):
             "input_audio_format": "g711_ulaw",
             "output_audio_format": "g711_ulaw",
             "voice": VOICE,
-            "instructions": SYSTEM_MESSAGE,
+            "instructions": get_system_message(name),
             "modalities": ["text", "audio"],
             "temperature": 0.8,
             "input_audio_transcription": {

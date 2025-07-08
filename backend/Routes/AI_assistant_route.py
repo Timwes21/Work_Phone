@@ -9,20 +9,14 @@ import os
 
 OPENAI_API_KEY = os.getenv('OPENAI_KEY')
 
-LOG_EVENT_TYPES = [
-    'error', 'response.content.done', 'rate_limits.updated',
-    'response.done', 'input_audio_buffer.committed',
-    'input_audio_buffer.speech_stopped', 'input_audio_buffer.speech_started',
-    'session.created'
-]
-SHOW_TIMING_MATH = False
 router = APIRouter()
 
 
 @router.api_route("/incoming-call/{business_number}", methods=["GET", "POST"])
 async def handle_incoming_call(request: Request, business_number: str):
     print("***in incoming-call route***")
-    await dial_person(business_number)
+    # return await dial_person(business_number)
+    return await dial_agent(request, business_number, "ai-assistant")
 
 @router.post("/get-call-status/{business_number}")
 async def call_status(request: Request, business_number: str):

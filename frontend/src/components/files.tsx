@@ -6,6 +6,7 @@ import { getToken } from "../token.ts";
 export default function Files(){
     const [ fileNames, setFileNames ] = useState<string[]>([]);
     const [ fileAdded, setFileAdded ] = useState<boolean>(false);
+    const [ fileExists, setFileExists ] = useState<boolean>(false);
     
 
     const deleteFile =(fileName: string) => {
@@ -14,7 +15,16 @@ export default function Files(){
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({filename: fileName, token: getToken()})
         })
-        .then(()=>setFileAdded(!fileAdded))
+        .then(response=>response.json())
+        .then(data=>{
+            if (data.file_exists){
+                setFileExists(true);
+                return;
+            }
+            setFileExists(false);
+            setFileAdded(!fileAdded)
+            
+        })
     }
 
     useEffect(()=> {
@@ -25,6 +35,8 @@ export default function Files(){
         })
         .then(response => response.json())
         .then(data=>{
+            console.log(data);
+            
             data.files && setFileNames(data.files)
         })
     },[fileAdded])
@@ -51,6 +63,7 @@ export default function Files(){
     return(
         <div className="files">
             <h3>Files</h3>
+            {fileExists && <>File already exists</>}
             <hr />
             <label id="choose-file-label" htmlFor="choose-file">Add File</label>
             <input id="choose-file" type="file" onChange={e=>{

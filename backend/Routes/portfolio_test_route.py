@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Form, UploadFile, Request, WebSocket
 from utils.db import collection
 from utils.file_parse import get_doc_contents
-from utils.query import save_docs
+from utils.query import save_docs_with_faiss
 from utils.call_choice import dial_agent
 from utils.openaiws import RealTimeInteraction
 import os
@@ -14,7 +14,7 @@ router = APIRouter()
 @router.post("/test")
 async def test(name: str = Form(...), file: UploadFile = Form(...)):
     contents_of_file: dict = await get_doc_contents(file)
-    save_docs(contents_of_file, "7726771701", portfolio=True)
+    save_docs_with_faiss(contents_of_file, "7726771701", portfolio=True)
 
     await collection.update_one({"twilio_number": "+17726771701"}, {"$set": {"files": contents_of_file, "name": name}})
     return "Updated!"
