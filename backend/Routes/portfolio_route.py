@@ -24,7 +24,7 @@ async def handle_incoming_call(request: Request, business_number: str):
     return await dial_agent(request, business_number, "portfolio")
 
 @router.websocket("/media-stream/{business_number}")
-async def handle_media_stream(request: Request, websocket: WebSocket, business_number: str):
+async def handle_media_stream(websocket: WebSocket, business_number: str):
     """Handle WebSocket connections between Twilio and OpenAI."""
     print("Client connected")
 
@@ -32,6 +32,6 @@ async def handle_media_stream(request: Request, websocket: WebSocket, business_n
         "Authorization": f"Bearer {OPENAI_API_KEY}",
         "OpenAI-Beta": "realtime=v1"
     }
-    collection = request.app.state.collection
+    collection = websocket.app.state.collection
     ws_convo = RealTimeInteraction(websocket, headers)
     await ws_convo.start(business_number, collection)
