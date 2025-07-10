@@ -10,16 +10,14 @@ OPENAI_API_KEY = os.getenv('OPENAI_KEY')
 router = APIRouter()
 
 
-@router.api_route("/incoming-call/{business_number}", methods=["GET", "POST"])
-async def handle_incoming_call(request: Request, business_number: str):
+@router.api_route("/incoming-call/{twilio_number}", methods=["GET", "POST"])
+async def handle_incoming_call(request: Request, twilio_number: str):
     print("***in incoming-call route***")
-    # collection = request.app.state.collection
-    # user = await collection.find_one({"twilio_number": business_number})
-    # return await dial_person(business_number, user)
-    return await dial_agent(request, business_number, "ai-assistant")
+    user = await request.app.state.collection.find_one({"twilio_number": twilio_number})
+    return await dial_person(twilio_number, "ai-assistant")
 
-@router.post("/get-call-status/{business_number}")
-async def call_status(request: Request, business_number: str):
+@router.post("/get-call-status/{twilio_number}")
+async def call_status(request: Request, twilio_number: str):
     print("***In get-call-status route**")
     body: bytes = await request.body()
     body: str = body.decode()
@@ -27,7 +25,7 @@ async def call_status(request: Request, business_number: str):
         
     
     if body["DialCallStatus"] != "completed":
-        return dial_agent(request, business_number, "ai-assistant")
+        return await dial_agent(request, twilio_number, "ai-assistant")
     
 
 @router.websocket("/media-stream/{business_number}")
