@@ -52,6 +52,9 @@ async def create_account(request: Request):
     collection = request.app.state.collection
     data: dict = await get_data(request)
     username, password, name, twilio_number, real_number = data.values()
+    possible_account = collection.find_one({"username": username})
+    if not possible_account:
+        return {"message": "Username Already Exists"}
     [token, current_time] = create_access_token()
     document = {
         "username": username,

@@ -31,7 +31,7 @@ def test_login():
 
 def test_logout():
     with TestClient(app) as client:
-        response = client.post("/logout", json={"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXJyZW50IjoiMTc1MTg3MDI3NS4yMTU2MTU3In0.EI48OSue4G0bAfIoftYDv4ptsy5BhUDPV6EneFOsAzM"})
+        response = client.post("/logout", json=token)
         assert response.status_code == 200
         response = response.json()
         assert response["message"] == "Logged Out"
@@ -40,6 +40,8 @@ def test_create_account():
     with TestClient(app) as client:
         response = client.post("/create-account", json={"username": "test", "password": "test", "name": "test", "twilio_number": "test", "real_number": "test"})
         assert response.status_code == 200
+        response == response.json()
+        assert response["message"] == "Username Already Exists"
         
 
 
