@@ -12,8 +12,11 @@ export default function Files(){
     const deleteFile =(fileName: string) => {
         fetch(fileBase+"/delete-file", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({filename: fileName, token: getToken()})
+            headers: {
+                "Content-Type": "application/json",
+                "token": getToken()
+            },
+            body: JSON.stringify({filename: fileName})
         })
         .then(response=>response.json())
         .then(data=>{
@@ -29,14 +32,14 @@ export default function Files(){
 
     useEffect(()=> {
         fetch(fileBase + "/get-files", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({"token": getToken()})
+            headers: {
+                "Content-Type": "application/json",
+                "token": getToken()
+            },
         })
         .then(response => response.json())
         .then(data=>{
             console.log(data);
-            
             data.files && setFileNames(data.files)
         })
     },[fileAdded])

@@ -1,10 +1,7 @@
 from fastapi import APIRouter, Request, Form, UploadFile
 from fastapi.responses import JSONResponse
 from utils.query import save_docs_with_faiss
-from utils.access_token import decode_access_token
-from utils.data import get_data
 from utils.file_parse import get_doc_contents
-import asyncio
 
 
 
@@ -21,10 +18,9 @@ async def get_dict(items: dict):
 
 @router.post("/save-files", response_class=JSONResponse)
 async def save_files(request: Request, file: UploadFile = Form(...), token: str = Form(...)):
-    print(file)
     collection = request.app.state.collection
     file_name = file.filename
-    current = decode_access_token(token)
+    current = request.app.state.decode_access_token(token)
     
     res = await collection.find_one({"tokens": current})
     existent_files = res['files']
@@ -46,11 +42,12 @@ async def save_files(request: Request, file: UploadFile = Form(...), token: str 
     
 
     
-@router.post("/get-files", response_class=JSONResponse)
+@router.get("/get-files", response_class=JSONResponse)
 async def get_files(request: Request):
-    data = await get_data(request)
+    token = request.headers["token"]
+    token = request.app.state.decode_token(token)
     collection = request.app.state.collection
-    user = await collection.find_one({"tokens": data["token"]})
+    user = await collection.find_one({"tokens": token})
     files = user['files']
     file_names = [file_name async for _,file in get_list(files) async for file_name,_ in get_dict(file)]
     print(file_names)
@@ -58,7 +55,7 @@ async def get_files(request: Request):
 
 @router.post("/delete-file")
 async def delete_file(request: Request):
-    data = await get_data(request)
+    data = await request.app.state.get_data(request)
     collection = request.app.state.collection
     file_name = data["filename"]
     user_account = await collection.find_one({"tokens": data["token"]}) or {}

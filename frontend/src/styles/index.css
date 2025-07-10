@@ -117,3 +117,17 @@ button{
 .log{
   color: black;
 }
+.settings{
+  display: flex;
+  gap: 20px;
+}
+.settings-label, .settings-content{
+  display: flex;
+  flex-direction: column;
+}
+.edit-button{
+  align-self: center;
+  background-color: white;
+  color: black;
+  /* padding: 0; */
+}

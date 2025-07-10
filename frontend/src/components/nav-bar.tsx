@@ -1,6 +1,7 @@
 import { authBase } from "../routes.ts"
 import { getToken, setToken } from "../token.ts"
 import { useNavigate } from "react-router-dom"
+import Settings from "./settings.tsx"
 
 export default function NavBar(){
     const nav = useNavigate()
@@ -25,6 +26,7 @@ export default function NavBar(){
     return (
         <header className="nav-bar">
             <h1>Work Phone</h1>
+            <Settings/>
             <button onClick={logout} id="logout-button">Logout</button>
         </header>
     )
