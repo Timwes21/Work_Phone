@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Form, UploadFile, Request, WebSocket
-from utils.db import collection
 from utils.file_parse import get_doc_contents
 from utils.query import save_docs_with_faiss
 from utils.call_choice import dial_agent
@@ -12,10 +11,10 @@ OPENAI_API_KEY = os.getenv('OPENAI_KEY')
 router = APIRouter()
 
 @router.post("/test")
-async def test(name: str = Form(...), file: UploadFile = Form(...)):
+async def test(request: Request, name: str = Form(...), file: UploadFile = Form(...)):
     contents_of_file: dict = await get_doc_contents(file)
     await save_docs_with_faiss(contents_of_file, "7726771701", portfolio=True)
-
+    collection = request.app.state.collection
     await collection.update_one({"twilio_number": "7726771701"}, {"$set": {"files": contents_of_file, "name": name}})
     return "Updated!"
 
@@ -25,7 +24,7 @@ async def handle_incoming_call(request: Request, business_number: str):
     return await dial_agent(request, business_number, "portfolio")
 
 @router.websocket("/media-stream/{business_number}")
-async def handle_media_stream(websocket: WebSocket, business_number: str):
+async def handle_media_stream(request: Request, websocket: WebSocket, business_number: str):
     """Handle WebSocket connections between Twilio and OpenAI."""
     print("Client connected")
 
@@ -33,6 +32,6 @@ async def handle_media_stream(websocket: WebSocket, business_number: str):
         "Authorization": f"Bearer {OPENAI_API_KEY}",
         "OpenAI-Beta": "realtime=v1"
     }
-
+    collection = request.app.state.collection
     ws_convo = RealTimeInteraction(websocket, headers)
-    await ws_convo.start(business_number)
+    await ws_convo.start(business_number, collection)

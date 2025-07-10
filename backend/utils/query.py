@@ -13,7 +13,6 @@ from langchain.chains.retrieval_qa.base import RetrievalQA
 
 load_dotenv()
 from utils.llm import llm
-from utils.db import collection
 api_key = os.environ['GOOGLE_API_KEY']
 embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001', api_key=api_key)
 url = os.environ["MONGO_URL"]
@@ -28,6 +27,10 @@ class OrganizedDoc(BaseModel):
 
 class Docs(BaseModel):
     docs: list[OrganizedDoc]
+
+
+
+
 
 async def ask_document(number, files):
     filepath = get_file_path(number)

@@ -1,7 +1,5 @@
 from fastapi import APIRouter, Request
-from utils.db import collection
 from fastapi.responses import JSONResponse
-import json
 from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 from utils.access_token import decode_access_token, create_access_token
@@ -17,11 +15,12 @@ router = APIRouter()
 @router.post("/login", response_class=JSONResponse)
 async def login(request: Request):
     data = await get_data(request)
+    collection = request.app.state.collection
     
     username, possible_password = data.values()
-    possible_user = await collection.find_one({"username": username})
+    possible_user = await collection.find_one({"username": username}) or None
     
-    if possible_user.keys() == 0:
+    if not possible_user:
         return {"logged_in": False, "message": "username does not exist"}
     
     password = possible_user["password"]
@@ -30,8 +29,6 @@ async def login(request: Request):
     if not password_match:
         return {"logged_in": False, "message": "password in incorrect"}
     
-    # if len(possible_user["tokens"]) > 4:
-    #     return {"logged_in": False, "message": "Only up to 4 devices can be logged in"}
     
     [token, current] = create_access_token()
     await collection.update_one({"username": username}, {"$push": {"tokens": current}})
@@ -42,9 +39,9 @@ async def login(request: Request):
 @router.post("/logout", response_class=JSONResponse)
 async def logout(request: Request):
     print("**In logout**")
+    collection = request.app.state.collection
     data: dict = await get_data(request)
     token: str = data["token"]
-    print(f"**Got token: {token}")
     await collection.update_one({"tokens": token}, {"$pull": {"tokens": token}})
     return {"message": "Logged Out"}
     
@@ -52,22 +49,22 @@ async def logout(request: Request):
 @router.post("/create-account", response_class=JSONResponse)
 async def create_account(request: Request):
     print("**In create_account**")
+    collection = request.app.state.collection
     data: dict = await get_data(request)
     username, password, name, twilio_number, real_number = data.values()
-    hashed_password = pwd_context.hash(password)
-    twilio_number = number.replace(" ", "").replace("(", "").replace(")", "").replace("-", "")
     [token, current_time] = create_access_token()
     document = {
         "username": username,
-        "password": hashed_password,
+        "password": pwd_context.hash(password),
         "name": name,
-        "twilio_number" : f"+1{twilio_number}",
-        "real_number": f"+1{real_number}",
+        "twilio_number" : twilio_number.replace(" ", "").replace("(", "").replace(")", "").replace("-", ""),
+        "real_number": real_number,
         "tokens": [current_time],
         "files": []
     }
     await collection.insert_one(document)
     return {"token": token, "message": "Logged In"}
+
 
 
 

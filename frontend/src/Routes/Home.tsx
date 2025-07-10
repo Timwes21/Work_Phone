@@ -11,11 +11,9 @@ function Home() {
   
   useEffect(()=> {
     const token = getToken()
-    console.log(token);
     
     if (token !== "noToken"){
       setLoggedIn(true);
-      console.log(token);
       return;
     }
     console.log("navigating");

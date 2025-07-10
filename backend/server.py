@@ -1,22 +1,24 @@
 import os
-from fastapi import FastAPI, Form, UploadFile
+from utils.lifespan import lifespan
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from ngrok import connect
 from Routes.AI_assistant_route import router as AI_assistant_route
 from Routes.auth_routes import router as auth_routes
 from Routes.file_routes import router as file_routes 
-from Routes.portfolio_test_route import router as test_route
+from Routes.portfolio_route import router as test_route
+
 
 load_dotenv()
+
 
 PORT = int(os.getenv('PORT', 5050))
 print(PORT)
 NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,6 +32,8 @@ app.include_router(AI_assistant_route, prefix="/ai-assistant", tags=["AI Assista
 app.include_router(file_routes, prefix="/files", tags=["files"])
 app.include_router(auth_routes, prefix="/auth", tags=["auth"])
 app.include_router(test_route, prefix="/portfolio", tags=["test"])
+
+
 
 
     

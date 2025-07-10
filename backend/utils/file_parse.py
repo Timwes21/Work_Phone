@@ -14,4 +14,6 @@ async def get_doc_contents(file):
         pdf = pdfplumber.open(io.BytesIO(doc_bytes))
         pages = pdf.pages
         contents = "\n".join([page.extract_text() for page in pages])
+    elif "txt" in ext:
+        contents = doc_bytes.decode("utf-8")
     return contents

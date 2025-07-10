@@ -6,7 +6,6 @@ import asyncio
 from utils.query import ask_document
 import os
 from dotenv import load_dotenv
-from utils.db import collection
 load_dotenv()
 
 
@@ -32,7 +31,7 @@ class RealTimeInteraction:
         self.response_start_timestamp_twilio = None
         self.SHOW_TIMING_MATH = False    
 
-    async def start(self, business_number):
+    async def start(self, business_number, collection):
         await self.ws.accept()
         async with websockets.connect(self.url, extra_headers=self.headers) as openai_ws:
             print(openai_ws)
