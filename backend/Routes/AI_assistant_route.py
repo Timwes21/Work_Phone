@@ -13,8 +13,8 @@ router = APIRouter()
 @router.api_route("/incoming-call/{twilio_number}", methods=["GET", "POST"])
 async def handle_incoming_call(request: Request, twilio_number: str):
     print("***in incoming-call route***")
-    user = await request.app.state.collection.find_one({"twilio_number": twilio_number})
-    return await dial_person(twilio_number, "ai-assistant")
+    user = await request.app.state.collection.find_one({"twilio_number": twilio_number}, {"_id": 0, "real_number": 1})
+    return await dial_person(twilio_number, user["real_number"])
 
 @router.post("/get-call-status/{twilio_number}")
 async def call_status(request: Request, twilio_number: str):

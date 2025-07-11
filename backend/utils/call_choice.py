@@ -1,11 +1,10 @@
 from twilio.twiml.voice_response import VoiceResponse, Connect, Say, Stream
 from fastapi.responses import HTMLResponse
 
-async def dial_person(twilio_number, user):
-    personal_number = user["real_number"]
-    my_number = f"+1{personal_number}"
+async def dial_person(twilio_number, real_number):
+    real_number = f"+1{real_number}"
     response = VoiceResponse()
-    dial = response.dial(number=my_number, action=f"/ai-assistant/get-call-status/{twilio_number}", timeout=15)
+    dial = response.dial(number=real_number, action=f"/ai-assistant/get-call-status/{twilio_number}", timeout=15)
     response = VoiceResponse()
     response.append(dial)
     return HTMLResponse(content=str(response), media_type="application/xml")
