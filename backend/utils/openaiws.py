@@ -39,10 +39,10 @@ class RealTimeInteraction:
             print(self.openai_ws)
             res = await collection.find_one({"twilio_number": business_number})
 
-            self.qa = await ask_document(business_number, res['files'])
+            self.retriever = await ask_document(business_number, res['files'])
             name = res['name'] if "name" in res else "The Caller"
         
-            await self.initialize_session(self.openai_ws, self.qa, name)
+            await self.initialize_session(self.openai_ws, self.retriever, name)
             await asyncio.gather(self.receive_from_twilio(), self.send_to_twilio())
 
  
@@ -135,7 +135,7 @@ class RealTimeInteraction:
                         if response['type'] == "function_call":
                             query = response['arguments']                                
                             print("***Question for FAISS", query)
-                            results = await self.qa.ainvoke(query)
+                            results = await self.retriever.ainvoke(query)
                             results = results['result']
                             print("****Results from FAISS: ", results)
                             send_results = {

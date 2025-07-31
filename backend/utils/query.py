@@ -38,8 +38,7 @@ async def ask_document(number, files):
         print("vector store exists")
         library = FAISS.load_local(filepath, embeddings=embeddings, allow_dangerous_deserialization=True)
         retriever = library.as_retriever()
-        qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever)
-        return qa
+        return retriever
         
     return None
 
