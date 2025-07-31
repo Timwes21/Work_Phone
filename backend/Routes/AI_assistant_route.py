@@ -28,9 +28,10 @@ async def call_status(request: Request, twilio_number: str):
         return await dial_agent(request, twilio_number, "ai-assistant")
     
 
+
 @router.websocket("/media-stream/{business_number}")
 async def handle_media_stream(websocket: WebSocket, business_number: str):
-    """Handle WebSocket connections between Twilio and OpenAI."""
+    """Handle WebSocket connections between Twilio and OpenAI"""
     print("Client connected")
 
     headers={
