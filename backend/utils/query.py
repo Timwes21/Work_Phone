@@ -17,8 +17,9 @@ api_key = os.environ['GOOGLE_API_KEY']
 embeddings = GoogleGenerativeAIEmbeddings(model='models/embedding-001', api_key=api_key)
 url = os.environ["MONGO_URL"]
 
+mount_path = os.environ["MNT_PATH"]
 def get_file_path(number):
-    return f"stores/{number}"
+    return f"{mount_path}/{number}"
 
 
 class OrganizedDoc(BaseModel):
