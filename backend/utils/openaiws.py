@@ -1,10 +1,13 @@
 import json
 import websockets
+from langchain.chains.retrieval_qa.base import RetrievalQA
+
 import base64
 from fastapi.websockets import WebSocketDisconnect
 import asyncio
 from utils.query import ask_document
 import os
+from utils.llm import llm
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -39,10 +42,12 @@ class RealTimeInteraction:
             print(self.openai_ws)
             res = await collection.find_one({"twilio_number": business_number})
 
-            self.retriever = await ask_document(business_number, res['files'])
+            retriever = await ask_document(business_number, res['files'])
+            self.qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+
             name = res['name'] if "name" in res else "The Caller"
         
-            await self.initialize_session(self.openai_ws, self.retriever, name)
+            await self.initialize_session(self.openai_ws, self.qa, name)
             await asyncio.gather(self.receive_from_twilio(), self.send_to_twilio())
 
  
@@ -129,13 +134,16 @@ class RealTimeInteraction:
                 #     self.call_log += [{"AI": AI_response}]
                     
                 if response.get("type") == "response.done":
+
                     response = response['response']["output"]
+                    print(response)
                     if len(response) > 0:
                         response = response[0]
                         if response['type'] == "function_call":
-                            query = response['arguments']                                
+                            query = response['arguments']      
                             print("***Question for FAISS", query)
-                            results = await self.retriever.ainvoke(query)
+                            results = await self.qa.ainvoke(query)
+                            print(results)
                             results = results['result']
                             print("****Results from FAISS: ", results)
                             send_results = {
@@ -143,14 +151,12 @@ class RealTimeInteraction:
                                 "item": {
                                     "type": "function_call_output",
                                     "call_id": response["call_id"],
-                                    "output": "{\"query_results\": \"" + results + "\"}"
+                                    "output": "{\"query_results\": \"" + results + "if nothing precedes this there were no results\"}"
                                 }
                             }
                             await self.openai_ws.send(json.dumps(send_results))
                             await self.openai_ws.send(json.dumps({"type": "response.create"}))
 
-                    else:
-                        print("empty list")
                     
                     # response = response['response']["output"][0]
                     # if response["type"] == "function_call":
