@@ -19,7 +19,10 @@ url = os.environ["MONGO_URL"]
 
 mount_path = os.environ["MNT_PATH"]
 def get_file_path(number):
-    return f"{mount_path}/{number}"
+    filepath = f"{mount_path}/{number}"
+    if not os.path.exists(filepath):
+        print("path does not exist")
+    return filepath
 
 
 class OrganizedDoc(BaseModel):

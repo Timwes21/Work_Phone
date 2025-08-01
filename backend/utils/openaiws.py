@@ -45,8 +45,10 @@ class RealTimeInteraction:
             retriever = await ask_document(business_number, res['files'])
             if retriever == None:
                 self.qa = None
+                print("No files match\n")
             else:
                 self.qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+                print("user has files\n")
 
             name = res['name'] if "name" in res else "The Caller"
         
@@ -144,11 +146,11 @@ class RealTimeInteraction:
                         response = response[0]
                         if response['type'] == "function_call":
                             query = response['arguments']      
-                            print("***Question for FAISS", query)
+                            print("***Question for FAISS", query, "\n")
                             results = await self.qa.ainvoke(query)
                             print(results)
                             results = results['result']
-                            print("****Results from FAISS: ", results)
+                            print("****Results from FAISS: ", results, "\n")
                             send_results = {
                                 "type": "conversation.item.create",
                                 "item": {
