@@ -37,9 +37,10 @@ async def ask_document(number, files):
     filepath = get_file_path(number)
     if len(files) > 0:
         print("vector store exists")
-        library = FAISS.load_local(filepath, embeddings=embeddings, allow_dangerous_deserialization=True)
-        retriever = library.as_retriever()
-        return retriever
+        if os.path.exists(filepath):
+            library = FAISS.load_local(filepath, embeddings=embeddings, allow_dangerous_deserialization=True)
+            retriever = library.as_retriever()
+            return retriever
         
     return None
 

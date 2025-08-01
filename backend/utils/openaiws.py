@@ -43,7 +43,10 @@ class RealTimeInteraction:
             res = await collection.find_one({"twilio_number": business_number})
 
             retriever = await ask_document(business_number, res['files'])
-            self.qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+            if retriever == None:
+                self.qa = None
+            else:
+                self.qa = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
 
             name = res['name'] if "name" in res else "The Caller"
         
